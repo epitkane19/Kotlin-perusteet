@@ -1,4 +1,4 @@
-# Viikkotehtävä 1 – Kotlin-perusteet
+# Viikkotehtävä 1 Kotlin-perusteet
 
 ## Datamalli
 
