@@ -25,6 +25,16 @@ filterByDone(list, done) //suodattaa taskit tilan mukaan
 sortByDueDate(list) //järjestää tehtävät eräpäivän mukaan
 ```
 
-Videodemo:
+Videodemo week1:
 
 https://youtu.be/Hqd4p1nCbls?si=xil7WXYfwOqRg5fg
+
+# Viikkotehtävä 2 Kotlin-perusteet jatkoa: ViewModel
+
+Composessa tila määrittää mitä käyttöliittymä näyttää eli kun se muuttuu, Compose automaattisesti päivittää UI:n vastaamaan uutta tilaa.
+
+ViewModel on parempi kuin pelkkä remember sillä se säilyttää paremmin sovelluksen dataa. Remember unohtaa datan kun composable poistuu ruudulta, esim. puhelinta kääntäessä. ViewModel säilyttää dataa vaikka composable häviää ja luodaan uudestaan.
+
+Videodemo week2:
+
+
