@@ -38,3 +38,13 @@ ViewModel on parempi kuin pelkkä remember sillä se säilyttää paremmin sovel
 Videodemo week2:
 
 https://youtu.be/ShRT1eF2pLs?si=Y1h4av4dge9ntOnG
+
+# Viikkotehtävä 3 Kotlin-perusteet jatkoa: MVVM-arkkitehtuuri
+
+MVVM on Model-View-ViewModel arkkitehtuurimalli, jossa sovellus jaetaan kolmeen eri edellä mainittuun kerrokseen. Model sisältää dataluokat ja logiikan, View sisältää Jetpack Compose-pohjaisen käyttöliittymän ja ViewModel yhdistää Modelin ja Viewin. ViewModel myös sisältää funktiot kuten addTask ja removeTask. MVVM on hyödyllinen Compose-sovelluksissa sillä UI pysyy yksinkertaisena Composen tilapohjaisuuden vuoksi. Muutokset koodiin on myös helpompi toteuttaa sillä MVVM tarjoaa selkeän kerrosjaon.
+
+StateFlow on Kotlinin mutableStateOf tavoin toinen tapa hoitaa tilanhallinta. Se sisältää aina viimeisimmän arvon ja lähettää uuden arvon kaikille kuuntelijoille.
+
+Videodemo week3:
+
+https://youtu.be/vYCKQIqI860?si=xMmtbyvzO6dOh0iM
