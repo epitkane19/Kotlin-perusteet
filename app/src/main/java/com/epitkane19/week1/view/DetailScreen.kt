@@ -52,19 +52,6 @@ fun DetailScreen(
                 horizontalArrangement = Arrangement.End,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Button(onClick = onDismiss) {
-                    Text("Cancel")
-                }
-                Spacer(Modifier.width(4.dp))
-                Button(
-                    onClick = {
-                        taskViewModel.removeTask(task.id)
-                        onDismiss()
-                    }
-                ) {
-                    Text("Delete")
-                }
-                Spacer(Modifier.width(4.dp))
                 Button(
                     onClick = {
                         taskViewModel.updateTask(
@@ -79,7 +66,22 @@ fun DetailScreen(
                 ) {
                     Text("Save")
                 }
+                Spacer(Modifier.width(4.dp))
+                Button(
+                    onClick = {
+                        taskViewModel.removeTask(task.id)
+                        onDismiss()
+                    }
+                ) {
+                    Text("Delete")
+                }
+                Spacer(Modifier.width(4.dp))
+                Button(onClick = onDismiss) {
+                    Text("Cancel")
+                }
             }
         }
     )
 }
+
+

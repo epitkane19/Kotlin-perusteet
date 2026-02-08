@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.epitkane19.week1.view
 
 import androidx.compose.foundation.layout.*
@@ -16,133 +18,119 @@ import androidx.compose.ui.unit.sp
 import com.epitkane19.week1.model.Task
 import com.epitkane19.week1.viewmodel.TaskViewModel
 import androidx.compose.foundation.clickable
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.runtime.getValue
 
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    taskViewModel: TaskViewModel = viewModel()
+    taskViewModel: TaskViewModel = viewModel(),
+    navigateToCalendar: () -> Unit
 ) {
-    var newTitle by remember { mutableStateOf("") }
-    var newDescription by remember { mutableStateOf("") }
-    var newDueDate by remember { mutableStateOf("") }
     var editTask by remember { mutableStateOf<Task?>(null) }
+    var showAddDialog by remember { mutableStateOf(false) }
 
-    Column(modifier = modifier
-        .systemBarsPadding()
-        .padding(16.dp)
-    ) {
-
-        Text("Task List", style = MaterialTheme.typography.headlineMedium)
-        Spacer(Modifier.height(16.dp))
-
-        // Uuden tehtävän lisäys
-        TextField(
-            value = newTitle,
-            onValueChange = { newTitle = it },
-            label = { Text("Title") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(8.dp))
-
-        TextField(
-            value = newDescription,
-            onValueChange = { newDescription = it },
-            label = { Text("Description") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(8.dp))
-
-        TextField(
-            value = newDueDate,
-            onValueChange = { newDueDate = it },
-            label = { Text("Due date (YYYY-MM-DD)") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(8.dp))
-
-        Button(
-            onClick = {
-                if (newTitle.isNotBlank()) {
-                    taskViewModel.addTask(
-                        Task(
-                            id = taskViewModel.tasks.size + 1,
-                            title = newTitle,
-                            description = newDescription,
-                            priority = 1,
-                            dueDate = newDueDate,
-                            done = false
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Task List") },
+                actions = {
+                    IconButton(onClick = navigateToCalendar) {
+                        Icon(
+                            imageVector = Icons.Default.DateRange,
+                            contentDescription = "Calendar"
                         )
-                    )
-                    newTitle = ""
-                    newDescription = ""
-                    newDueDate = ""
+                    }
                 }
+            )
+        }
+    ) { padding ->
+
+        Column(
+            modifier = modifier
+                .padding(padding)
+                .padding(16.dp)
+        ) {
+
+            // Uuden tehtävän lisäys
+            Button(
+                onClick = { showAddDialog = true },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Add Task")
             }
-        ) {
-            Text("Add Task")
-        }
+            Spacer(Modifier.height(16.dp))
 
+            // Suodatusnapit
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Button(onClick = { taskViewModel.showAll() }) { Text("All") }
+                Button(onClick = { taskViewModel.filterByDone(false) }) { Text("Undone") }
+                Button(onClick = { taskViewModel.filterByDone(true) }) { Text("Done") }
+            }
 
-        Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(16.dp))
 
-        // Suodatusnapit
-        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-            Button(onClick = { taskViewModel.showAll() }) { Text("All") }
-            Button(onClick = { taskViewModel.filterByDone(false) }) { Text("Undone") }
-            Button(onClick = { taskViewModel.filterByDone(true) }) { Text("Done") }
-        }
+            // Sort by date
+            Button(
+                onClick = { taskViewModel.sortByDueDate() },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Sort by date")
+            }
 
-        Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(16.dp))
 
-        // Sort by date -toiminto
-        Button(
-            onClick = { taskViewModel.sortByDueDate() },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Sort by date")
-        }
-
-        Spacer(Modifier.height(16.dp))
-
-        // Tehtävälista
-        LazyColumn {
-            items(taskViewModel.tasks) { task ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Checkbox(
-                            checked = task.done,
-                            onCheckedChange = { taskViewModel.toggleDone(task.id) }
-                        )
-                        Spacer(Modifier.width(8.dp))
-
-                        Column(
-                            modifier = Modifier.clickable { editTask = task }
-                        ) {
-                            Text(
-                                text = task.title,
-                                style = MaterialTheme.typography.bodyLarge
+            // Tehtävälista
+            LazyColumn {
+                items(taskViewModel.tasks) { task ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Checkbox(
+                                checked = task.done,
+                                onCheckedChange = { taskViewModel.toggleDone(task.id) }
                             )
+                            Spacer(Modifier.width(8.dp))
 
-                            Text(
-                                text = task.description,
-                                fontSize = 12.sp,
-                                color = Color.Gray,
-                                modifier = Modifier.padding(top = 2.dp)
-                            )
-
-                            task.dueDate?.let {
+                            Column(
+                                modifier = Modifier.clickable { editTask = task }
+                            ) {
                                 Text(
-                                    text = "Due: $it",
+                                    text = task.title,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+
+                                Text(
+                                    text = task.description,
                                     fontSize = 12.sp,
-                                    //color = Color.Gray,
+                                    color = Color.Gray,
                                     modifier = Modifier.padding(top = 2.dp)
                                 )
+
+                                task.dueDate?.let {
+                                    Text(
+                                        text = "Due: $it",
+                                        fontSize = 12.sp,
+                                        modifier = Modifier.padding(top = 2.dp)
+                                    )
+                                }
                             }
                         }
                     }
@@ -157,5 +145,83 @@ fun HomeScreen(
             taskViewModel = taskViewModel
         )
     }
+    if (showAddDialog) {
+        AddTaskDialog(
+            onDismiss = { showAddDialog = false },
+            onAddTask = { title, description, dueDate ->
+                taskViewModel.addTask(
+                    Task(
+                        id = taskViewModel.tasks.size + 1,
+                        title = title,
+                        description = description,
+                        priority = 1,
+                        dueDate = dueDate,
+                        done = false
+                    )
+                )
+            }
+        )
+    }
 
 }
+
+@Composable
+fun AddTaskDialog(
+    onDismiss: () -> Unit,
+    onAddTask: (String, String, String) -> Unit
+) {
+    var title by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var dueDate by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Add New Task") },
+        text = {
+            Column {
+                TextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Title") }
+                )
+                Spacer(Modifier.height(8.dp))
+
+                TextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text("Description") }
+                )
+                Spacer(Modifier.height(8.dp))
+
+                TextField(
+                    value = dueDate,
+                    onValueChange = { dueDate = it },
+                    label = { Text("Due date (YYYY-MM-DD)") }
+                )
+            }
+        },
+        confirmButton = {
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Button(
+                    onClick = {
+                        if (title.isNotBlank()) {
+                            onAddTask(title, description, dueDate)
+                            onDismiss()
+                        }
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Add")
+                }
+                Spacer(Modifier.width(16.dp))
+                Button(onClick = onDismiss, modifier = Modifier.weight(1f)) {
+                    Text("Cancel")
+                }
+            }
+        }
+    )
+}
+
